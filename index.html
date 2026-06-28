@@ -377,10 +377,10 @@ tbody tr:last-child td{border-bottom:none}
       <div class="ld">PALIZ DESARROLLOS</div>
     </div>
     <div class="l-card">
-      <div class="l-err" id="lerr">Credenciales incorrectas.</div>
+      <div class="l-err" id="lerr" style="display:none">Credenciales incorrectas.</div>
       <div class="fg"><label>Correo electrónico</label><input type="email" id="li-email" value="gerente@va.com" autocomplete="username"></div>
       <div class="fg"><label>Contraseña</label><input type="password" id="li-pass" value="1234" autocomplete="current-password"></div>
-      <button class="btn-login" onclick="doLogin()">Iniciar sesión</button>
+      <button class="btn-login" id="btn-login-submit">Iniciar sesión</button>
       <div class="l-demo"><b>Gerente:</b> gerente@va.com / 1234 &nbsp;|&nbsp; <b>Asesor:</b> asesor@va.com / 1234</div>
     </div>
   </div>
@@ -1949,7 +1949,7 @@ function doLogin(){
   populateSelects();
   $('sql-schema').textContent=SUPABASE_SCHEMA;
 }
-$('li-pass').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+// li-pass keydown handled in DOMContentLoaded below
 function doLogout(){ CU=null; $('app').style.display='none'; $('login-screen').style.display='flex'; }
 
 function applyCU(){
@@ -4112,6 +4112,19 @@ window.addEventListener('resize',checkMobile); checkMobile();
 window.addEventListener('resize',()=>{ const el=$('dash-bot'); if(el) el.style.gridTemplateColumns=window.innerWidth<900?'1fr':'1fr 330px'; });
 // Check Supabase saved credentials
 (()=>{ const u=localStorage.getItem('va_sb_url'),k=localStorage.getItem('va_sb_key'); if(u&&k){ if($('sb-url')) $('sb-url').value=u; if($('sb-key')) $('sb-key').value=k; } })();
+
+// ── BIND LOGIN EVENTS (safe: all functions already defined above) ──
+document.addEventListener('DOMContentLoaded', function() {
+  var btnLogin = document.getElementById('btn-login-submit');
+  if(btnLogin) btnLogin.addEventListener('click', function(){ doLogin(); });
+  var passInput = document.getElementById('li-pass');
+  if(passInput) passInput.addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+});
+// Fallback: also bind immediately in case DOMContentLoaded already fired
+(function(){
+  var btnLogin = document.getElementById('btn-login-submit');
+  if(btnLogin) btnLogin.addEventListener('click', function(){ doLogin(); });
+})();
 </script>
 </body>
 </html>
